@@ -3,7 +3,13 @@ from collections.abc import AsyncGenerator
 from playwright.async_api import async_playwright,Playwright,Browser,Page
 
 
-print("✅ Loading conftest.py ")
+def pytest_addoption(parser):
+    parser.addoption(
+        "--channel",
+        action="store",
+        default=None,
+        help="Browser channel to use (e.g., chrome, msedge). Only valid with chromium."
+    )
 
 def pytest_configure(config:pytest.Config):
     print("✅ pytest_configure executed (conftest.py detected)")
@@ -16,11 +22,17 @@ async def playwright_instance():
 
 @pytest.fixture(scope="session")
 async def browser(playwright_instance:Playwright,pytestconfig:pytest.Config):
-    browser_name = pytestconfig.getoption("--browser")
-    for name in browser_name:
-        browser = await getattr(playwright_instance, name).launch()
-        # browser = await playwright_instance.chromium.launch(headless=False) 
-        # browser = await playwright_instance.firefox.launch(headless=False)
+    browser_name = pytestconfig.getoption("browser")
+    headed = False if pytestconfig.getoption("headed") else True
+    browser_channel = pytestconfig.getoption("channel")
+    browser_type = getattr(playwright_instance, browser_name[0])
+
+    if browser_name == "chromium" and browser_channel:
+        browser = await browser_type.launch(channel=browser_channel, headless=headed)
+        yield browser
+        await browser.close()
+    else:
+        browser = await browser_type.launch(headless=headed)
         yield browser
         await browser.close()
     
