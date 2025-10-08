@@ -1,4 +1,5 @@
 import pytest,allure
+from conftest import ALL_BROWSERS_DEVICES as platform
 from pages.home_page import HomePage
 from playwright.async_api import Page
 
@@ -7,16 +8,14 @@ from playwright.async_api import Page
 @allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "page",
-    [{"browser": b, "device": d} for b in ["chromium", "firefox", "webkit"] for d in [None, "iPhone 12", "Pixel 5"]],
-    indirect=True,
-)
+    "page",[{"platform":p}for p in [platform["chrome"],platform["firefox"],platform["safari"],platform["edge"],platform["android"],platform["iphone"]]],
+      indirect=True)
 async def test_example(page:Page):
     pg = HomePage(page)
     await pg.open()
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("page",[{"browser":b,"device":None,"channel":None}for b in ["chromium", "firefox", "webkit"]], indirect=True)
+@pytest.mark.parametrize("page",[{"platform":p}for p in [platform.get("chrome"),platform.get("edge"),platform.get("android")]], indirect=True)
 async def test_dois(page:Page):
     await HomePage(page).open()
     await HomePage(page).go_to_docs()

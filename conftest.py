@@ -3,12 +3,38 @@ from collections.abc import AsyncGenerator
 from playwright.async_api import async_playwright,Playwright,Browser,Page,BrowserContext
 
 
-
-ALL_BROWSERS = ["chromium", "firefox", "webkit"]
-ALL_DEVICES = [None, "iPhone 12", "Pixel 5", "Galaxy S24"]
-ALL_CHANNELS = ["chrome","msedge"]
-
-
+ALL_BROWSERS_DEVICES = {
+    "chrome":{
+        "browser":"chromium",
+        "channel":"chrome",
+        "device":None
+    },
+    "edge":{
+        "browser":"chromium",
+        "channel":"msedge",
+        "device":None
+    },
+    "firefox":{
+        "browser":"firefox",
+        "channel":None,
+        "device":None
+    },
+    "safari":{
+        "browser":"webkit",
+        "channel":None,
+        "device":None
+    },
+    "iphone":{
+        "browser":"webkit",
+        "channel":None,
+        "device":"iPhone 12"
+    },
+    "android":{
+        "browser":"chromium",
+        "channel":"chrome",
+        "device":"Galaxy S24"
+    }
+}
 
 def pytest_addoption(parser):
     parser.addoption(
@@ -33,10 +59,13 @@ async def page(playwright_instance:Playwright,pytestconfig:pytest.Config,request
 
     #Seting browser context
     context: BrowserContext
-    browser_name = request.param.get("browser")
-    device_name = request.param.get("device")
+    platform = request.param.get("platform")
+    browser_name = platform.get("browser")
+    channel_name = platform.get("channel")
+    device_name = platform.get("device")
+
     browser_type = getattr(playwright_instance, browser_name)
-    browser: Browser = await browser_type.launch(headless=headed)
+    browser: Browser = await browser_type.launch(headless=headed,channel=channel_name)
 
     #checking if there is device
     if device_name:
