@@ -78,6 +78,7 @@ async def page(playwright_instance:Playwright,pytestconfig:pytest.Config,request
 
     #Yield page for the test
     yield page
-    await context.close() 
+    await context.close()
+    await browser.close()
 
     
