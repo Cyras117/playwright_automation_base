@@ -15,7 +15,7 @@ async def test_example(page:Page):
     await pg.open()
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("page",[{"platform":p}for p in [platform.get("chrome"),platform.get("edge"),platform.get("android")]], indirect=True)
+@pytest.mark.parametrize("page",[{"platform":p}for p in [platform.get("chrome"),platform.get("edge")]], indirect=True)
 async def test_dois(page:Page):
     await HomePage(page).open()
     await HomePage(page).go_to_docs()

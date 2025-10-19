@@ -1,4 +1,4 @@
-import pytest
+import pytest,sys
 from collections.abc import AsyncGenerator
 from playwright.async_api import async_playwright,Playwright,Browser,Page,BrowserContext
 
@@ -36,13 +36,6 @@ ALL_BROWSERS_DEVICES = {
     }
 }
 
-def pytest_addoption(parser):
-    parser.addoption(
-        "--channel",
-        action="store",
-        default=None,
-        help="Browser channel to use (e.g., chrome, msedge). Only valid with chromium."
-    )
 
 def pytest_configure():
     print("✅ pytest_configure executed (conftest.py detected)")
@@ -55,8 +48,7 @@ async def playwright_instance():
 @pytest.fixture(scope="session")
 async def page(playwright_instance:Playwright,pytestconfig:pytest.Config,request):
     #Get headed param
-    headed = False if pytestconfig.getoption("headed") else True
-
+    headless = False if pytestconfig.getoption("headed") else True
     #Seting browser context
     context: BrowserContext
     platform = request.param.get("platform")
@@ -65,7 +57,7 @@ async def page(playwright_instance:Playwright,pytestconfig:pytest.Config,request
     device_name = platform.get("device")
 
     browser_type = getattr(playwright_instance, browser_name)
-    browser: Browser = await browser_type.launch(headless=headed,channel=channel_name)
+    browser: Browser = await browser_type.launch(headless=headless,channel=channel_name)
 
     #checking if there is device
     if device_name:
