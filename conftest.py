@@ -1,40 +1,6 @@
-import pytest,sys
-from collections.abc import AsyncGenerator
+import pytest
 from playwright.async_api import async_playwright,Playwright,Browser,Page,BrowserContext
 
-
-ALL_BROWSERS_DEVICES = {
-    "chrome":{
-        "browser":"chromium",
-        "channel":"chrome",
-        "device":None
-    },
-    "edge":{
-        "browser":"chromium",
-        "channel":"msedge",
-        "device":None
-    },
-    "firefox":{
-        "browser":"firefox",
-        "channel":None,
-        "device":None
-    },
-    "safari":{
-        "browser":"webkit",
-        "channel":None,
-        "device":None
-    },
-    "iphone":{
-        "browser":"webkit",
-        "channel":None,
-        "device":"iPhone 12"
-    },
-    "android":{
-        "browser":"chromium",
-        "channel":"chrome",
-        "device":"Galaxy S24"
-    }
-}
 
 
 def pytest_configure():
