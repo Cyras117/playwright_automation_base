@@ -12,7 +12,7 @@ async def playwright_instance():
         yield pw
 
 @pytest.fixture(scope="session")
-async def page(playwright_instance:Playwright,pytestconfig:pytest.Config,request):
+async def page(playwright_instance:Playwright,pytestconfig:pytest.Config,request:pytest.FixtureRequest):
     #Get headed param
     headless = False if pytestconfig.getoption("headed") else True
     #Seting browser context
